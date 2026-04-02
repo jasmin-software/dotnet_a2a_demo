@@ -1,6 +1,5 @@
 using A2A;
 using Microsoft.Agents.AI;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using System.ClientModel;

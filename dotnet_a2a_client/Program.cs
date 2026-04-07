@@ -20,7 +20,7 @@ A2AClient a2aChatClient = new(new Uri(agentCard.Url));
 
 // Send the message and get the response
 // Console.WriteLine("\nNon-Streaming Message Communication");
-var weatherAgent = a2aChatClient.AsAIAgent();
+var weatherAgent = a2aChatClient.AsAIAgent(name: "WeatherAgent");
 // var response = await a2aChatClient.AsAIAgent().RunAsync("What is the weather like in Vancouver?");
 // Console.WriteLine($" Received complete response from agent: {response.Text}");
 
@@ -76,12 +76,15 @@ AgentCard agentCard2 = await agentCardResolver1.GetAgentCardAsync();
 A2AClient a2aChatClient2 = new(new Uri(agentCard2.Url));
 
 // Send the message and get the response
-var calendarAgent = a2aChatClient2.AsAIAgent();
+var calendarAgent = a2aChatClient2.AsAIAgent(name: "CalendarAgent");
 
 // consolidation agent
 var consolidateAgent = chatClient.AsAIAgent(
         name: "Assistant",
-        instructions: @"You use the weather data and existing calendar data to schedule outdoor activities for user when user doesn't have anything scheduled in their calendar.");
+        instructions: @"You use the weather data and existing calendar data to schedule outdoor activities for user.
+        Activity should only be scheduled when the weather is good, and there's an open slot in the user's calendar.
+        You are concise with your answers. You do not ask the user for approval. You make the decisions and create the calendar event using the calendar agent tool.",
+        tools: [calendarAgent.AsAIFunction()]);
 
 
 // Call the server agent here and put into a workflow. // TODO

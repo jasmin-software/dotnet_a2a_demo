@@ -1,5 +1,6 @@
 using A2A;
 using Microsoft.Agents.AI;
+using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using System.ClientModel;
@@ -11,31 +12,32 @@ A2ACardResolver agentCardResolver = new A2ACardResolver(new Uri("https://netbc-w
 AgentCard agentCard = await agentCardResolver.GetAgentCardAsync();
 
 JsonSerializerOptions s_indentedOptions = new(A2AJsonUtilities.DefaultOptions){ WriteIndented = true};
-Console.WriteLine("\nAgent card details:");
-Console.WriteLine(JsonSerializer.Serialize(agentCard, s_indentedOptions));
+// Console.WriteLine("\nAgent card details:");
+// Console.WriteLine(JsonSerializer.Serialize(agentCard, s_indentedOptions));
 
 
 A2AClient a2aChatClient = new(new Uri(agentCard.Url));
 
 // Send the message and get the response
-Console.WriteLine("\nNon-Streaming Message Communication");
-var response = await a2aChatClient.AsAIAgent().RunAsync("What is the weather like in Vancouver?");
-Console.WriteLine($" Received complete response from agent: {response.Text}");
+// Console.WriteLine("\nNon-Streaming Message Communication");
+var weatherAgent = a2aChatClient.AsAIAgent();
+// var response = await a2aChatClient.AsAIAgent().RunAsync("What is the weather like in Vancouver?");
+// Console.WriteLine($" Received complete response from agent: {response.Text}");
 
-var streamingResponse = a2aChatClient.AsAIAgent().RunStreamingAsync("What is the weather like in Vancouver?");
-Console.WriteLine("\nStreaming Message Communication"); 
-await foreach (var update in streamingResponse)
-{
-    foreach (var content in update.Contents)
-    {
-        if (content is TextContent textContent)
-        {
-            Console.Write(textContent.Text);
-        }
-    }
-}
+// var streamingResponse = a2aChatClient.AsAIAgent().RunStreamingAsync("What is the weather like in Vancouver?");
+// Console.WriteLine("\nStreaming Message Communication"); 
+// await foreach (var update in streamingResponse)
+// {
+//     foreach (var content in update.Contents)
+//     {
+//         if (content is TextContent textContent)
+//         {
+//             Console.Write(textContent.Text);
+//         }
+//     }
+// }
 
-Console.WriteLine("\n\n");
+// Console.WriteLine("\n\n");
 
 // A2A as tool ========================================================
 AIAgent remoteAgent = await agentCardResolver.GetAIAgentAsync();
@@ -62,10 +64,51 @@ var agent = chatClient.AsAIAgent(
         instructions: @"You are a personal assistant. You are concise with your answers.", 
         tools: [remoteAgent.AsAIFunction()]);
 
-var asToolResponse = await agent.RunAsync("What is the weather like in Vancouver?");
-Console.WriteLine($"\n\n{asToolResponse.Text}");
+// var asToolResponse = await agent.RunAsync("What is the weather like in Vancouver?");
+// Console.WriteLine($"\n\n{asToolResponse.Text}");
 
-// Create their server agent
+// Create their server agent // DONE 
 
 
-// Call the server agent here and put into a workflow.
+A2ACardResolver agentCardResolver1 = new A2ACardResolver(new Uri("http://localhost:5098/"));
+AgentCard agentCard2 = await agentCardResolver1.GetAgentCardAsync();
+
+A2AClient a2aChatClient2 = new(new Uri(agentCard2.Url));
+
+// Send the message and get the response
+var calendarAgent = a2aChatClient2.AsAIAgent();
+
+// consolidation agent
+var consolidateAgent = chatClient.AsAIAgent(
+        name: "Assistant",
+        instructions: @"You use the weather data and existing calendar data to schedule outdoor activities for user when user doesn't have anything scheduled in their calendar.");
+
+
+// Call the server agent here and put into a workflow. // TODO
+
+
+
+AIAgent workflowAgent = AgentWorkflowBuilder.BuildSequential(weatherAgent, calendarAgent, consolidateAgent).AsAIAgent();
+
+// Console.WriteLine(await workflowAgent.RunAsync("I want to do a run today or tomorrow, find a time for me."));
+
+
+string? lastAuthor = null;
+await foreach (var update in workflowAgent.RunStreamingAsync("I want to do a 20km run today or tomorrow, when should I do it?"))
+{
+    // Skip WorkflowEvent-only updates
+    if ((update.Contents == null || update.Contents.Count == 0) && update.RawRepresentation is WorkflowEvent)
+    {
+        continue;
+    }
+
+    if (lastAuthor != update.AuthorName)
+    {
+        lastAuthor = update.AuthorName;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"\n\n** {update.AuthorName} **");
+        Console.ResetColor();
+    }
+
+    Console.Write(update.Text);
+}

@@ -65,11 +65,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 // Expose the agent over A2A
-app.MapA2A(calendarAgent, path: "/a2a/calendar", agentCard: new()
+app.MapA2A(calendarAgent, path: "/", agentCard: new()
 {
     Name = "Calendar Agent",
     Description = "An A2A calendar assistant that can list and create events.",
     Version = "1.0.0"
-});
+},
+taskManager => app.MapWellKnownAgentCard(taskManager, "/"));
 
 app.Run();

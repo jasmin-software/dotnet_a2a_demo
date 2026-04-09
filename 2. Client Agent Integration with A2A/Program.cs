@@ -17,7 +17,7 @@ AIAgent remoteAgent = await agentCardResolver.GetAIAgentAsync();
 
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
     .Build();
 
 string? token = config["GitHub:Token"];

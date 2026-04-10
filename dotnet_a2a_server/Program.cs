@@ -1,7 +1,5 @@
 using A2A.AspNetCore;
 using Microsoft.Extensions.AI;
-using Microsoft.Agents.AI;
-using Microsoft.Agents.AI.Hosting;
 using OpenAI;
 
 var builder = WebApplication.CreateBuilder(args);

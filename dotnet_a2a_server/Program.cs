@@ -10,13 +10,7 @@ string githubToken = builder.Configuration["GitHub:Token"]
 string endpoint = builder.Configuration["GitHub:ApiEndpoint"] ?? "https://models.github.ai/inference";
 string model = builder.Configuration["GitHub:Model"] ?? "openai/gpt-4o-mini";
 
-AITool[] tools =
-[
-    AIFunctionFactory.Create(CalendarTool.GetEventsOnDate),
-    AIFunctionFactory.Create(CalendarTool.CreateEvent)
-];
-
-// Create chat client
+// Create chat client and agent
 IChatClient chatClient = new OpenAIClient(
     new System.ClientModel.ApiKeyCredential(githubToken),
     new OpenAIClientOptions
@@ -30,15 +24,23 @@ var calendarAgent = chatClient.AsAIAgent(
     instructions:
     """
     You are a calendar assistant.
-    Help users view and create calendar events.
+    You list calendar events given a date, and you create new events with 
+    a title, start time, end time, and optional location and description.
 
     Rules:
-    - When the user asks what is on a day, use the calendar tools.
-    - If a user wants to create an event, gather title, start time, and end time if missing.
+    - When the user asks what is on a day, use the GetEventsOnDate tools.
+    - If a user wants to create an event, gather title, start time, and end time if missing, 
+      and use the CreateEvent tool.
+    - Do not create the event if there is already an event that overlaps with the requested time.
     - Keep responses concise and helpful.
     - Always confirm created events with the exact time.
+
+    - Today is 2026-04-21.
     """,
-    tools: tools
+    tools: [
+        AIFunctionFactory.Create(CalendarTool.GetEventsOnDate),
+        AIFunctionFactory.Create(CalendarTool.CreateEvent)
+    ]
 );
 builder.Services.AddSingleton(chatClient);
 
@@ -52,6 +54,7 @@ app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Expose the agent over A2A
 AgentCard calendarAgentCard = new AgentCard
 {
     Name = "Calendar Agent",
@@ -79,7 +82,6 @@ AgentCard calendarAgentCard = new AgentCard
     ]
 };
 
-// Expose the agent over A2A
 app.MapA2A(
     calendarAgent, 
     path: "/", 

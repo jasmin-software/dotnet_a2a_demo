@@ -1,3 +1,12 @@
+dotnet new web -n '2. A2A Agent Implementation'
+
+dotnet add package Microsoft.Agents.AI.Hosting.A2A.AspNetCore --version 1.0.0-preview.260402.1
+dotnet add package Microsoft.AspNetCore.OpenApi --version 10.0.5
+dotnet add package Microsoft.Extensions.AI.OpenAI --version 10.4.1
+dotnet add package Swashbuckle.AspNetCore --version 10.1.7
+
+Set up chat client configuration
+``` C#
 using A2A;
 using A2A.AspNetCore;
 using Microsoft.Extensions.AI;
@@ -12,8 +21,10 @@ string githubToken = builder.Configuration["GitHub:Token"]
     ?? throw new InvalidOperationException("GitHub:Token is not set.");
 string endpoint = builder.Configuration["GitHub:ApiEndpoint"] ?? "https://models.github.ai/inference";
 string model = builder.Configuration["GitHub:Model"] ?? "openai/gpt-4o-mini";
+```
 
-// Create chat client and agent
+Create chat client and agent
+``` C#
 IChatClient chatClient = new OpenAIClient(
     new System.ClientModel.ApiKeyCredential(githubToken),
     new OpenAIClientOptions
@@ -52,8 +63,10 @@ var app = builder.Build();
 app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
+```
 
-// Expose the agent over A2A
+Customize agent card
+``` C#
 AgentCard calendarAgentCard = new AgentCard
 {
     Name = "Calendar Agent",
@@ -80,7 +93,10 @@ AgentCard calendarAgentCard = new AgentCard
         }
     ]
 };
+```
 
+Expose agent via A2A protocol
+``` C#
 app.MapA2A(
     calendarAgent, 
     path: "/", 
@@ -88,3 +104,4 @@ app.MapA2A(
     taskManager => app.MapWellKnownAgentCard(taskManager, "/"));
 
 app.Run();
+```

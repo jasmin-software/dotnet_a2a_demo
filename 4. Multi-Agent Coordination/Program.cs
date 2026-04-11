@@ -54,6 +54,27 @@ var plannerAgent = chatClient.AsAIAgent(
 // AIAgent workflowAgent = AgentWorkflowBuilder.BuildSequential(availabilityAgent, plannerAgent).AsAIAgent();
 var workflowAgent = AgentWorkflowBuilder.BuildSequential(weatherAgent, calendarAgent, plannerAgent);
 
+// string? lastAuthor = null;
+// await foreach (var update in workflowAgent.AsAIAgent().RunStreamingAsync("plan my 20km for tomorrow"))
+// {
+//     // Skip WorkflowEvent-only updates
+//     if ((update.Contents == null || update.Contents.Count == 0) && update.RawRepresentation is WorkflowEvent)
+//     {
+//         continue;
+//     }
+
+//     if (lastAuthor != update.AuthorName)
+//     {
+//         lastAuthor = update.AuthorName;
+//         Console.ForegroundColor = ConsoleColor.Green;
+//         Console.WriteLine($"\n\n** {update.AuthorName} **");
+//         Console.ResetColor();
+//     }
+
+//     Console.Write(update.Text);
+// }
+
+// ==================================================
 // var x = await InProcessExecution.RunStreamingAsync(workflowAgent, new List<ChatMessage> { new(ChatRole.User, "best time to run tomorrow?")});
 // await x.TrySendMessageAsync(new TurnToken(emitEvents: true));
 // var result = new List<AgentResponseUpdate>();
@@ -76,62 +97,75 @@ var workflowAgent = AgentWorkflowBuilder.BuildSequential(weatherAgent, calendarA
 //     Console.WriteLine($"{msg.Text}");
 //     break;
 // }
-// // Send message to agent
-// AgentSession session = await workflowAgent.CreateSessionAsync();
-// List<ChatMessage> messages = [];
 
-// Console.Write("\nEnter the outdoor activity you'd like to plan or :q to quit.\n");
 
-// try
-// {
-//     while (true)
-//     {
-//         // Get and validate user input
-//         Console.Write("\n> ");
-//         string? message = Console.ReadLine();
+// Send message to agent =================================
+AgentSession session = await workflowAgent.AsAIAgent().CreateSessionAsync();
+List<ChatMessage> messages = [];
 
-//         if (string.IsNullOrWhiteSpace(message))
-//         {
-//             Console.WriteLine("Request cannot be empty.");
-//             continue;
-//         }
-//         if (message.ToLowerInvariant() is ":q" or "quit")
-//         {
-//             break;
-//         }
+Console.Write("\nEnter the outdoor activity you'd like to plan or :q to quit.\n");
 
-//         messages.Add(new ChatMessage(ChatRole.User, message));
+try
+{
+    while (true)
+    {
+        // Get and validate user input
+        Console.Write("\n> ");
+        string? message = Console.ReadLine();
 
-//         // Stream and print the response
-//         await foreach (AgentResponseUpdate update in workflowAgent.RunStreamingAsync(messages, session))
-//         {
-//             Console.ForegroundColor = ConsoleColor.Blue;
-//             foreach (AIContent content in update.Contents)
-//             {
-//                 if (content is TextContent textContent)
-//                 {
-//                     Console.Write(textContent.Text);
-//                 }
-//                 // else if (content is FunctionCallContent functionCallContent)
-//                 // {                    
-//                 //     var argsJson = JsonSerializer.Serialize(
-//                 //         functionCallContent.Arguments,
-//                 //         new JsonSerializerOptions { WriteIndented = true }
-//                 //     );
-//                 //     Console.ForegroundColor = ConsoleColor.DarkGray;
-//                 //     Console.WriteLine($"\n[Function Call: {functionCallContent.Name}]\nArguments:\n{argsJson}");
-//                 // }
-//                 // else if (content is FunctionResultContent functionResultContent)
-//                 // {
-//                 //     Console.ForegroundColor = ConsoleColor.DarkGray;
-//                 //     Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
-//                 // }
-//             }
-//             Console.ResetColor();
-//         }
-//     }
-// }
-// catch (Exception ex)
-// {
-//     Console.WriteLine($"\nAn error occurred: {ex.Message}");
-// }
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            Console.WriteLine("Request cannot be empty.");
+            continue;
+        }
+        if (message.ToLowerInvariant() is ":q" or "quit")
+        {
+            break;
+        }
+
+        messages.Add(new ChatMessage(ChatRole.User, message));
+
+        // Stream and print the response
+        await foreach (AgentResponseUpdate update in workflowAgent.AsAIAgent().RunStreamingAsync(messages, session))
+        {
+            
+            foreach (AIContent content in update.Contents)
+            {
+                if (content is TextContent textContent)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write(textContent.Text);
+                    if (update.AuthorName != null && update.AuthorName == "Assistant")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write(" \n[Assistant]");
+                    }
+                }
+                if (content is ErrorContent errorContent)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\n[Error: {errorContent.Message}]");
+                }
+                // else if (content is FunctionCallContent functionCallContent)
+                // {                    
+                //     var argsJson = JsonSerializer.Serialize(
+                //         functionCallContent.Arguments,
+                //         new JsonSerializerOptions { WriteIndented = true }
+                //     );
+                //     Console.ForegroundColor = ConsoleColor.DarkGray;
+                //     Console.WriteLine($"\n[Function Call: {functionCallContent.Name}]\nArguments:\n{argsJson}");
+                // }
+                // else if (content is FunctionResultContent functionResultContent)
+                // {
+                //     Console.ForegroundColor = ConsoleColor.DarkGray;
+                //     Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
+                // }
+            }
+            Console.ResetColor();
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"\nAn error occurred: {ex.Message}");
+}

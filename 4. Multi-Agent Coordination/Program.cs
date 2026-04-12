@@ -40,69 +40,28 @@ AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 A2ACardResolver calendarAgentCardResolver = new A2ACardResolver(new Uri("http://localhost:5098/"));
 AIAgent calendarAgent = await calendarAgentCardResolver.GetAIAgentAsync();
 
-// Create a client agent that uses the weather agent as a tool 
-var plannerAgent = chatClient.AsAIAgent(
+var activitySummaryAgent = chatClient.AsAIAgent(
         name: "Assistant",
-        instructions: @"You are a outdoor activity planner who speaks concisely.
-        Given user's schedule and the weather forecast, you suggest the best time for outdoor activities.
-        You can only suggest a time the weather is good, and there should be nothing scheduled on the calendar at the same time.
-        You make an estimate on how long each calendar even will last based on the activity.
-        Use the tool to create the outdoor activity event in the user's calendar.", 
-        tools: [calendarAgent.AsAIFunction()]);
+        instructions: @"You are a calendar event summary assistant.
+        You are the final step in a workflow. Earlier agents selected a time based on weather and created the event.
 
-// var availabilityAgent = AgentWorkflowBuilder.BuildConcurrent([weatherAgent, calendarAgent]);
-// AIAgent workflowAgent = AgentWorkflowBuilder.BuildSequential(availabilityAgent, plannerAgent).AsAIAgent();
-var workflowAgent = AgentWorkflowBuilder.BuildSequential(weatherAgent, calendarAgent, plannerAgent);
+        Your job:
+        - State when the activity is scheduled (start and end time).
+        - Briefly explain why that time was chosen based on the weather.
+        - If relevant, suggest specific items to bring based on the forecast.
 
-// string? lastAuthor = null;
-// await foreach (var update in workflowAgent.AsAIAgent().RunStreamingAsync("plan my 20km for tomorrow"))
-// {
-//     // Skip WorkflowEvent-only updates
-//     if ((update.Contents == null || update.Contents.Count == 0) && update.RawRepresentation is WorkflowEvent)
-//     {
-//         continue;
-//     }
+        Guidelines:
+        - Be concise and natural (2–3 sentences).
+        - Do not mention the workflow or other agents.
+        - Do not include unnecessary details.
+        - Only suggest items if needed.");
 
-//     if (lastAuthor != update.AuthorName)
-//     {
-//         lastAuthor = update.AuthorName;
-//         Console.ForegroundColor = ConsoleColor.Green;
-//         Console.WriteLine($"\n\n** {update.AuthorName} **");
-//         Console.ResetColor();
-//     }
+AIAgent workflowAgent = AgentWorkflowBuilder.BuildSequential(weatherAgent, calendarAgent, activitySummaryAgent).AsAIAgent();
 
-//     Console.Write(update.Text);
-// }
-
-// ==================================================
-// var x = await InProcessExecution.RunStreamingAsync(workflowAgent, new List<ChatMessage> { new(ChatRole.User, "best time to run tomorrow?")});
-// await x.TrySendMessageAsync(new TurnToken(emitEvents: true));
-// var result = new List<AgentResponseUpdate>();
-// await foreach (WorkflowEvent evt in x.WatchStreamAsync().ConfigureAwait(false))
-// {
-//     if (evt is WorkflowOutputEvent completed)
-//     {
-//         if (completed.Data is AgentResponseUpdate update)
-//         {
-//             result.Add(update);
-//             break;
-
-//         }
-//     }
-// }
-
-// foreach (var msg in result.Where(x => x.Role !=ChatRole.User))
-// {
-//     Console.WriteLine("------------------------------");
-//     Console.WriteLine($"{msg.Text}");
-//     break;
-// }
-
-
-// Send message to agent =================================
-AgentSession session = await workflowAgent.AsAIAgent().CreateSessionAsync();
+// Send message to agent
+bool isDebug = true;
+AgentSession session = await workflowAgent.CreateSessionAsync();
 List<ChatMessage> messages = [];
-
 Console.Write("\nEnter the outdoor activity you'd like to plan or :q to quit.\n");
 
 try
@@ -112,10 +71,11 @@ try
         // Get and validate user input
         Console.Write("\n> ");
         string? message = Console.ReadLine();
+        string? lastAuthor = null;
 
         if (string.IsNullOrWhiteSpace(message))
         {
-            Console.WriteLine("Request cannot be empty.");
+            Console.WriteLine("\nRequest cannot be empty.");
             continue;
         }
         if (message.ToLowerInvariant() is ":q" or "quit")
@@ -126,40 +86,51 @@ try
         messages.Add(new ChatMessage(ChatRole.User, message));
 
         // Stream and print the response
-        await foreach (AgentResponseUpdate update in workflowAgent.AsAIAgent().RunStreamingAsync(messages, session))
+        await foreach (AgentResponseUpdate update in workflowAgent.RunStreamingAsync(messages, session))
         {
-            
             foreach (AIContent content in update.Contents)
             {
                 if (content is TextContent textContent)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write(textContent.Text);
-                    if (update.AuthorName != null && update.AuthorName == "Assistant")
+                    if (update.AuthorName != null)
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write(" \n[Assistant]");
+                        if (lastAuthor != update.AuthorName)
+                        {
+                            lastAuthor = update.AuthorName;
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"\n** {update.AuthorName} **");
+                            Console.ResetColor();
+                        }
+                        if (update.AuthorName == activitySummaryAgent.Name)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.Write(textContent.Text);
+                        }
+                    }
+                    else
+                    {
+                        if (isDebug && update.RawRepresentation is AgentMessage agentMessage)
+                        {
+                            if (update.Role == ChatRole.Assistant)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
+                                if (update.AgentId == weatherAgent.Id)
+                                {
+                                    Console.WriteLine($"\n[A2A Agent: Weather Agent] \n{textContent.Text}");
+                                }
+                                else if (update.AgentId == calendarAgent.Id)
+                                {
+                                    Console.WriteLine($"\n[A2A Agent: Calendar Agent] \n{textContent.Text}");
+                                }
+                            }
+                        }
                     }
                 }
-                if (content is ErrorContent errorContent)
+                else if (content is ErrorContent errorContent)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\n[Error: {errorContent.Message}]");
+                    Console.WriteLine($"\n[Error: {update.RawRepresentation}]");
                 }
-                // else if (content is FunctionCallContent functionCallContent)
-                // {                    
-                //     var argsJson = JsonSerializer.Serialize(
-                //         functionCallContent.Arguments,
-                //         new JsonSerializerOptions { WriteIndented = true }
-                //     );
-                //     Console.ForegroundColor = ConsoleColor.DarkGray;
-                //     Console.WriteLine($"\n[Function Call: {functionCallContent.Name}]\nArguments:\n{argsJson}");
-                // }
-                // else if (content is FunctionResultContent functionResultContent)
-                // {
-                //     Console.ForegroundColor = ConsoleColor.DarkGray;
-                //     Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
-                // }
             }
             Console.ResetColor();
         }

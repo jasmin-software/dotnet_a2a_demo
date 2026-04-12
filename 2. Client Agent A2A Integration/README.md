@@ -33,7 +33,7 @@ Replace `appsettings.Development.json` with this JSON code:
 
 Edit the `.gitignore` file and add to it `appsettings.Development.json` so that your secrets do not find their way into source control by mistake.
 
-### Set up chat client configuration.
+### Set up chat client configuration
 
 Delete any existing code in `Program.cs`.
 

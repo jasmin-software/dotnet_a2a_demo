@@ -85,10 +85,10 @@ var agent = chatClient.AsAIAgent(
         tools: [weatherAgent.AsAIFunction()]);
 ```
 
-### Send message to agent
+### Send message to agent and stream response
 
 ``` C#
-// Send message to agent
+// Send message to agent and stream response
 var response = agent.RunStreamingAsync("What is the weather like in Vancouver?");
 await foreach (var update in response)
 {

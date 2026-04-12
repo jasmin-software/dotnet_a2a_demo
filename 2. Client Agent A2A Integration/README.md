@@ -54,6 +54,7 @@ string? model = config["GitHub:Model"] ?? "openai/gpt-4o-mini";
 ### Initialize chat client
 
 ``` C#
+// Initialize chat client
 var chatClient = new OpenAIClient(
     new ApiKeyCredential(token!),
     new OpenAIClientOptions()
@@ -66,6 +67,7 @@ var chatClient = new OpenAIClient(
 ### Connect to the A2A weather agent
 
 ``` C#
+// Connect to the A2A weather agent
 A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://netbc-weather-agent.azurewebsites.net/"));
 AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 ```
@@ -73,6 +75,7 @@ AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 ### Create a client agent that uses the weather agent as a tool
 
 ``` C#
+// Create a client agent that uses the weather agent as a tool
 var agent = chatClient.AsAIAgent(
         name: "Assistant",
         instructions: @"You are a personal weather assistant. 
@@ -85,6 +88,7 @@ var agent = chatClient.AsAIAgent(
 ### Send message to agent
 
 ``` C#
+// Send message to agent
 var response = agent.RunStreamingAsync("What is the weather like in Vancouver?");
 await foreach (var update in response)
 {

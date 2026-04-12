@@ -10,7 +10,7 @@ cd '1. A2A Agent Discovery'
 dotnet add package Microsoft.Agents.AI.A2A --version 1.0.0-preview.260402.1
 ```
 # Program.cs
-Open your application in VS code. Delete any code in `Program.cs` and add the following C# code in sequence:
+Open your application in VS code. Replace the content in `Program.cs` with the following C# code in sequence:
 
 Connect to A2A Agent and get agent card:
 

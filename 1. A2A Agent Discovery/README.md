@@ -43,7 +43,7 @@ Console.WriteLine($"Received complete response from agent: {response.Text}\n");
 ```
 
 # Run app
-In a new terminal:
+In terminal window:
 
 ```bash
 dotnet run
@@ -126,7 +126,7 @@ await foreach (var update in streamingResponse)
 ```
 
 # Run app
-In a new terminal:
+In terminal window:
 
 ```bash
 dotnet run

@@ -40,6 +40,13 @@ Delete any existing code in `Program.cs`.
 Add the following code in sequence.
 
 ``` C#
+using System.ClientModel;
+using System.Text.Json;
+using A2A;
+using Microsoft.Agents.AI;
+using Microsoft.Extensions.AI;
+using OpenAI;
+
 // Read configuration settings
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

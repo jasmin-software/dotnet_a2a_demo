@@ -205,10 +205,6 @@ internal static class CalendarTool {
 }
 ```
 
-# TODO: 
-# OR Suggestion: 
-## Maybe people can just clone this project with the Tools folder completed and they can just focus on the content in Program.cs
-
 Replace `Program.cs` with the following code:
 
 ``` C#
@@ -312,3 +308,48 @@ app.MapA2A(
 
 app.Run();
 ```
+### Making Swagger UI the default landing page
+
+Open `Properties/launchSettings.json` in your editor and make the following changes:
+
+Inside the `http` and `https` blocks, add the following:
+
+```json
+"launchUrl": "swagger"
+```
+
+### Run app
+
+In the terminal window:
+
+```bash
+dotnet watch
+```
+
+The web app will automatically open in your btowser at address [http://](http://localhost:????/swagger/index.html) with the interface that looks like this:
+
+![alt text](![Swagger Interface](image.png).png)
+
+<details>
+
+<summary>Here's an example of the interaction:</summary>
+
+```json
+[Function Call: Weather_Agent]
+Arguments:
+{
+  "query": "current weather in Vancouver"
+}
+
+[Function Result: {"current":{"time":"2026-04-12T08:15","temperature":"10.4°C","feelsLike":"9.4°C","windSpeed":"6.2 km/h","condition":"Overcast"},"today":{"hourly":[{"time":"2026-04-12T00:00","temperature":"8.5°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T01:00","temperature":"8.8°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T02:00","temperature":"8.1°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T03:00","temperature":"8.2°C","precipitation":"0 mm","condition":"Clear sky"},{"time":"2026-04-12T04:00","temperature":"8.1°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T05:00","temperature":"8.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-12T06:00","temperature":"8.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-12T07:00","temperature":"9.8°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T08:00","temperature":"10.4°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-12T09:00","temperature":"10.7°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T10:00","temperature":"11.9°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T11:00","temperature":"12.9°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T12:00","temperature":"13.5°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-12T13:00","temperature":"13.4°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-12T14:00","temperature":"13.5°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-12T15:00","temperature":"13.7°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T16:00","temperature":"13.9°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T17:00","temperature":"13.1°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T18:00","temperature":"12.2°C","precipitation":"0 mm","condition":"Clear sky"},{"time":"2026-04-12T19:00","temperature":"11.1°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T20:00","temperature":"10.1°C","precipitation":"0 mm","condition":"Clear sky"},{"time":"2026-04-12T21:00","temperature":"9.5°C","precipitation":"0 mm","condition":"Mainly clear"},{"time":"2026-04-12T22:00","temperature":"9.1°C","precipitation":"0 mm","condition":"Clear sky"},{"time":"2026-04-12T23:00","temperature":"9.4°C","precipitation":"0 mm","condition":"Overcast"}]}}]
+Currently in Vancouver, it is 10.4°C and feels like 9.4°C. The sky is overcast with a light wind blowing at 6.2 km/h.
+
+For the next few hours:
+- At 9:00 AM, the temperature will rise slightly to 10.7°C with partly cloudy skies.
+- By 10:00 AM, it will further increase to 11.9°C, still with partly cloudy conditions.
+- At 11:00 AM, the temperature will reach 12.9°C and the sky will be mainly clear.
+
+No precipitation is expected, and the weather will gradually become sunnier and warmer over the next few hours.
+```
+
+</details>

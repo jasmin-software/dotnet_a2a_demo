@@ -1,3 +1,7 @@
+In this walkthrough, you will create personal assistant agent that knows how to schedule events on your behalf and list your scheduled events.
+
+Create a simple .NET web application with the following terminal window commands:
+
 ``` bash
 dotnet new web -n '3. A2A Agent Implementation'
 

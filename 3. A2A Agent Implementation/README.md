@@ -1,4 +1,4 @@
-In this walkthrough, you will create personal assistant calendar agent that knows how to schedule events on your behalf and list your scheduled events.
+In this walkthrough, you will create personal calendar assistant agent that knows how to schedule events on your behalf and list your scheduled events.
 
 Create a simple .NET web application with the following terminal window commands:
 

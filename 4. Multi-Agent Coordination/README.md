@@ -1,7 +1,8 @@
 This walkthrough involves developing a client application that sequentially communcates with multiple agents in order to solve this challenge:
 
 ```
-I need to schedule an activity as soon as possible. The activity requires good weather. Schedule for me the activity after determining the most suitable time depending weather conditions.
+I need to schedule an activity as soon as possible. The activity requires good weather.
+Schedule the activity for me after determining the most suitable time depending weather conditions.
 ```
 
 This means two agents will get engaged to fulfill the task:

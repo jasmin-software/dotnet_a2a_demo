@@ -235,5 +235,9 @@ This is the response I got from the workflow agent:
 It looks like you're planning a hike along the Knox Mountain - Apex Trail in Kelowna. The weather forecast for April 13 shows an overcast condition with temperatures ranging from 10.6°C at 10:00 AM increasing steadily to 14.1°C by 4:00 PM. It remains overcast most of the day with lighter conditions turning partly cloudy later in the afternoon.
 
 [Assistant]
-Your hike along the Knox Mountain - Apex Trail is scheduled from 1:00 PM to 4:00 PM. This time was chosen for the mild temperature of around 11-14°C and the partly cloudy conditions expected by the afternoon, making it comfortable for outdoor activity. Bring layers and water, as temperatures may be cooler earlier on.
+Your hike along the Knox Mountain - Apex Trail is scheduled from 1:00 PM to 4:00 PM.
+
+This time was chosen for the mild temperature of around 11-14°C and the partly cloudy conditions expected by the afternoon, making it comfortable for outdoor activity.
+
+Bring layers and water, as temperatures may be cooler earlier on.
 ```

@@ -2,6 +2,7 @@ This walkthrough involves developing a client application that sequentially comm
 
 ```
 I need to schedule an activity as soon as possible. The activity requires good weather.
+
 Schedule the activity for me after determining the most suitable time depending weather conditions.
 ```
 

@@ -207,7 +207,7 @@ In the terminal window of the third walkthrough `3. A2A Agent Implementation`, r
 dotnet run --urls=http://localhost:5098
 ```
 
-In another terminal window of this walkthrough `4. Multi-Agent Coordination`, run the following command:
+In another terminal window of the `4. Multi-Agent Coordination` folder, run the following command:
 
 ```bash
 dotnet run

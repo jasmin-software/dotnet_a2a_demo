@@ -1,3 +1,5 @@
+![workflow](workflow.png)
+
 This walkthrough involves developing a client application that sequentially communcates with multiple agents in order to solve this challenge:
 
 ```

@@ -109,7 +109,7 @@ Comment out this code.
 // Console.WriteLine($"Received complete response from agent: {response.Text}\n");
 ```
 
-Add the following code instead of the above commented out code.
+Add the following code instead of the above commented out code to stream the response faster.
 
 ``` C#
 // Send message and stream the response

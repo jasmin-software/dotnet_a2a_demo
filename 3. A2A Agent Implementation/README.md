@@ -1,3 +1,5 @@
+![robot](robot.png)
+
 In this walkthrough, you will create personal calendar assistant agent that schedules and lists events on your behalf.
 
 Create a simple .NET web application with the following terminal window commands:

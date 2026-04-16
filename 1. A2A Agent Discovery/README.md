@@ -105,8 +105,8 @@ Comment out this code.
 
 ```C#
 // Send message and get the response
-var response = await chatClient.AsAIAgent().RunAsync(message);
-Console.WriteLine($"Received complete response from agent: {response.Text}\n");
+// var response = await chatClient.AsAIAgent().RunAsync(message);
+// Console.WriteLine($"Received complete response from agent: {response.Text}\n");
 ```
 
 Add the following code instead of the above commented out code.

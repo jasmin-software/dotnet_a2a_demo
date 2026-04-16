@@ -1,3 +1,5 @@
+![A2A discovery](discovery.png)
+
 We will create a simple application that is able to discover the capabilities of an agent that is already deployed online. The URL of the agent is https://netbc-weather-agent.azurewebsites.net/.
 
 Let's first create a simple .NET console app with the following terminal window command:

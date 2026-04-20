@@ -1,10 +1,11 @@
 # 2. Client Agnet A2A Integration
 ## How do we interact with an A2A agent? 
+
+Now, we will build a client agent to interact with the weather agent ([https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger)). 
+
+We would be able to ask the agent what the weather is like in a particular city.
+
 ![Vancouver Weather](weather-in-yvr.png)
-
-In the previous example, we discovered the capabilities of the weather agent on [https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger). 
-
-In this example, we will build a client agent to interact with that agent. We would be able to ask the agent what the weather is like in a particular city.
 
 ## Setup
 

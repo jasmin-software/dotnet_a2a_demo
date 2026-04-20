@@ -1,12 +1,13 @@
 # 1. A2A Agent Discovery
 ## How do we know what an agent can do?
+
+We will create a simple application to discover the capabilities of a weather agent ([https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger)).
+
 ![A2A discovery](discovery.png)
 
-We will create a simple application to discover the capabilities of a weather agent. The URL of the agent is [https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger).
+## Setup
 
 Let's first create a .NET console app with the following terminal window command:
-
-## Setup
 
 ``` bash
 dotnet new console -n '1. A2A Agent Discovery'

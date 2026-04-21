@@ -113,7 +113,7 @@ var summaryAgent = chatClient.AsAIAgent(
 // setup a sequential workflow agent that makes sequential
 // requests to weather, calendar, and summary agents 
 AIAgent workflowAgent = AgentWorkflowBuilder.BuildSequential(
-    weatherAgent, calendarAgent, activitySummaryAgent
+    weatherAgent, calendarAgent, summaryAgent
 ).AsAIAgent();
 ```
 
@@ -156,7 +156,7 @@ try {
                             Console.ResetColor();
                         }
 
-                        if (update.AuthorName == activitySummaryAgent.Name) {
+                        if (update.AuthorName == summaryAgent.Name) {
                             Console.ForegroundColor = ConsoleColor.Blue;
                             Console.Write(textContent.Text);
                         }

@@ -1,15 +1,14 @@
 # 4. Multi-Agent Coordination
 
 ## How do we connect the agents?
-
-![workflow](workflow.png)
-
 In this walkthrough, you'll develop a client application that talks to multiple agents (i.e., weather agent, calendar agent, summary agent). 
 
 We would be able to ask the client to schedule an outdoor activity for us. It will:
 1. Determine a time with good weather (using the **weather agent**) 
 2. Figure out when we are free (using the **calendar agent**)
 3. Provide a description of the activity scheduled (using the **summary agent**)
+
+![workflow](workflow.png)
 
 We will be using a sequential workflow since more than one agent is involved.
 

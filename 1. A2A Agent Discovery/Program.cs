@@ -7,7 +7,9 @@ A2ACardResolver agentCardResolver = new A2ACardResolver(new Uri("https://a2a-wea
 AgentCard agentCard = await agentCardResolver.GetAgentCardAsync();
 
 JsonSerializerOptions s_indentedOptions = new(A2AJsonUtilities.DefaultOptions){ WriteIndented = true};
+Console.ForegroundColor = ConsoleColor.Blue;
 Console.WriteLine("\nAgent card details:");
+Console.ResetColor();
 Console.WriteLine(JsonSerializer.Serialize(agentCard, s_indentedOptions));
 
 // // Create a chat client

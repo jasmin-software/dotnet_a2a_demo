@@ -10,6 +10,8 @@ We would be able to ask the client to schedule an outdoor activity for us. It wi
 
 ![workflow](workflow.png)
 
+![alt text](image.png)
+
 We will be using a sequential workflow since more than one agent is involved.
 
 ## Setup

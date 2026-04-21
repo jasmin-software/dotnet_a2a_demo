@@ -46,6 +46,7 @@ await foreach (var update in response)
     {
         if (content is TextContent textContent)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(textContent.Text);
         }
         else if (isDebug && content is FunctionCallContent functionCallContent)
@@ -60,7 +61,7 @@ await foreach (var update in response)
         else if (isDebug && content is FunctionResultContent functionResultContent)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
+            Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]\n");
         }
     }
 }

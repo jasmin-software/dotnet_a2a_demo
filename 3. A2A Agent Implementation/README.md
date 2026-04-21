@@ -2,7 +2,7 @@
 
 ## How do we create our own A2A agent?
 
-In this walkthrough, you will create your own calendar assistant agent.
+In this walkthrough, we will create your own calendar assistant agent.
 
 We would be able to ask the agent to schedule an event for us, or list our schedule of the day.
 
@@ -315,7 +315,7 @@ AgentCard calendarAgentCard = new AgentCard {
 };
 ```
 
-### Expose agent via A2A protocol
+### Expose agent on A2A
 ``` C#
 // Expose agent via A2A protocol
 app.MapA2A(
@@ -326,7 +326,7 @@ app.MapA2A(
 
 app.Run();
 ```
-### Making Swagger UI the default landing page
+### Update Swagger's default landing page
 
 Open `Properties/launchSettings.json` in your editor and make the following changes:
 
@@ -364,7 +364,7 @@ Enter the following JSON then click on `Execute`:
     "parts": [
       {
         "kind": "text",
-        "text": "Schedule a visit to the dentist on May 4, 2026 at 10 AM for one hour.",
+        "text": "Schedule my dentist appointment on May 4, 2026 at 10 AM for one hour.",
         "metadata": {}
       }
     ],
@@ -376,10 +376,10 @@ Enter the following JSON then click on `Execute`:
 
 ![Execute Button](images/execute.png)
 
-The response from the agent will display.
+The agent will indicate whether the event is created.
 
 ![server response](images/server-response.png)
 
-Go ahead and change the `text` field in the `Request body` and ask the agent your schedule for May 4, 2026.
+Go ahead and update the `Request body` and ask the agent what your schedule is like on May 4, 2026.
 
 ## Next: [4. Multi-Agent Coordination](https://github.com/jasmin-software/dotnet_a2a_workshop/blob/master/4.%20Multi-Agent%20Coordination/README.md)

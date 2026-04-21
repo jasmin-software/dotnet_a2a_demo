@@ -118,7 +118,7 @@ Received complete response from agent:
                 "temperature": "8.5°C",
                 "precipitation": "0 mm",
                 "condition": "Partly cloudy"
-            }
+            }, ...
         ]
     }
 }
@@ -157,7 +157,7 @@ await foreach (var update in streamingResponse)
 }
 ```
 
-Run the app, i.e., `dotnet run`, you'll get the same output, but streamed in real-time.
+Run the app, i.e., `dotnet run`. You'll get the same output, but streamed in real-time.
 
 </details>
 

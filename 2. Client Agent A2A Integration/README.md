@@ -1,7 +1,7 @@
 # 2. Client Agnet A2A Integration
 ## How do we interact with an A2A agent? 
 
-Now, we will build a client agent to interact with the weather agent ([https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger)). 
+In this walkthrough, we will build a client agent to interact with the weather agent ([https://a2a-weather.azurewebsites.net/](https://a2a-weather.azurewebsites.net/swagger)). 
 
 We would be able to ask the agent what the weather is like in a particular city.
 
@@ -106,6 +106,42 @@ await foreach (var update in response)
         {
             Console.Write(textContent.Text);
         }
+    }
+}
+```
+
+## Run app
+
+In the terminal window:
+
+```bash
+dotnet run
+```
+<details>
+
+<summary>Here's an example of the interaction</summary>
+
+```
+Currently in Vancouver, it is 10.4°C and feels like 9.4°C. The sky is overcast with a light wind blowing at 6.2 km/h.
+
+For the next few hours:
+- At 9:00 AM, the temperature will rise slightly to 10.7°C with partly cloudy skies.
+- By 10:00 AM, it will further increase to 11.9°C, still with partly cloudy conditions.
+- At 11:00 AM, the temperature will reach 12.9°C and the sky will be mainly clear.
+
+No precipitation is expected, and the weather will gradually become sunnier and warmer over the next few hours.
+```
+
+</details>
+
+<details>
+
+<summary>Debug logs</summary>
+<br>
+
+If you'd like to see the debug logs (e.g., what arguments is being passed in, what is the raw resule), add these else-if block to the `update.Contents` loop:
+
+``` C#
         else if (isDebug && content is FunctionCallContent functionCallContent)
         {                    
             var argsJson = JsonSerializer.Serialize(
@@ -120,31 +156,44 @@ await foreach (var update in response)
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
         }
+```
 
+You'll see exactly what argument is being passed in and what result is returned by the weather agent:
+
+``` json
+[Function Call: Weather_Agent]
+Arguments:
+{
+  "query": "current weather in Vancouver"
+}
+
+[Function Result]
+{
+    "current": {
+        "time": "2026-04-12T09:00",
+        "temperature": "10.4°C",
+        "feelsLike": "9.5°C",
+        "windSpeed": "5.6 km/h",
+        "condition": "Overcast"
+    },
+    "today": {
+        "hourly": [
+            {
+                "time": "2026-04-12T00:00",
+                "temperature": "8.8°C",
+                "precipitation": "0 mm",
+                "condition": "Partly cloudy"
+            },
+            {
+                "time": "2026-04-12T01:00",
+                "temperature": "8.5°C",
+                "precipitation": "0 mm",
+                "condition": "Partly cloudy"
+            }, ...
+        ]
     }
 }
-```
 
-## Run app
-
-In the terminal window:
-
-```bash
-dotnet run
-```
-<details>
-
-<summary>Here's an example of the interaction:</summary>
-
-```json
-Currently in Vancouver, it is 10.4°C and feels like 9.4°C. The sky is overcast with a light wind blowing at 6.2 km/h.
-
-For the next few hours:
-- At 9:00 AM, the temperature will rise slightly to 10.7°C with partly cloudy skies.
-- By 10:00 AM, it will further increase to 11.9°C, still with partly cloudy conditions.
-- At 11:00 AM, the temperature will reach 12.9°C and the sky will be mainly clear.
-
-No precipitation is expected, and the weather will gradually become sunnier and warmer over the next few hours.
 ```
 
 </details>

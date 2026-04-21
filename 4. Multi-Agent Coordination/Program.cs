@@ -17,6 +17,7 @@ string? endpoint = config["GitHub:ApiEndpoint"] ?? "https://models.github.ai/inf
 string? model = config["GitHub:Model"] ?? "openai/gpt-4o-mini";
 
 // Connect to the A2A weather agent
+// A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://a2a-weather.azurewebsites.net/"));
 A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("http://localhost:5000/"));
 AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 
@@ -35,7 +36,7 @@ var chatClient = new OpenAIClient(
 
 // Create a client-side agent to summarize the event created
 var summaryAgent = chatClient.AsAIAgent(
-        name: "Assistant",
+        name: "Summary Agent",
         instructions: @"You are a calendar event summary assistant.
         You are the final step in a workflow. Earlier agents selected a time based on weather and created the event.
 
@@ -88,7 +89,7 @@ try {
                         if (isDebug && lastAuthor != update.AuthorName) {
                             Console.ForegroundColor = ConsoleColor.Green;
                             lastAuthor = update.AuthorName;
-                            Console.WriteLine($"\n[Client Agent: {update.AuthorName}]");
+                            Console.WriteLine($"\n[{DateTime.UtcNow} Client Agent: {update.AuthorName}]");
                         }
                         if (update.AuthorName == summaryAgent.Name) {
                             Console.ForegroundColor = ConsoleColor.Blue;
@@ -100,39 +101,12 @@ try {
                             Console.ForegroundColor = ConsoleColor.Green;
                             if (update.Role == ChatRole.Assistant) {
                                 if (update.AgentId == weatherAgent.Id) {
-                                    Console.WriteLine($"\n[A2A Agent: Weather Agent]");
+                                    Console.WriteLine($"\n[{DateTime.UtcNow} A2A Agent: Weather Agent]");
                                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                                    // Console.WriteLine($"{textContent.Text}");
-                                    Console.WriteLine("""
-            {
-                "current": {
-                    "time": "2026-04-21T12:00:00Z",
-                    "temperature": "25°C",
-                    "feels_like": "27°C",
-                    "wind_speed": "10 km/h",
-                    "condition": "Partly cloudy"
-                },
-                "today": {
-                    "hourly": [
-                        {
-                            "time": "2026-04-21T13:00:00Z",
-                            "temperature": "26°C",
-                            "precipitation": "0 mm",
-                            "condition": "Clear sky"
-                        },
-                        {
-                            "time": "2026-04-21T14:00:00Z",
-                            "temperature": "27°C",
-                            "precipitation": "0 mm",
-                            "condition": "Mainly clear"
-                        }
-                    ]
-                }
-            }
-            """);
+                                    Console.WriteLine($"{textContent.Text}");
                                 } 
                                 else if (update.AgentId == calendarAgent.Id) {
-                                    Console.WriteLine($"\n[A2A Agent: Calendar Agent]");
+                                    Console.WriteLine($"\n[{DateTime.UtcNow} A2A Agent: Calendar Agent]");
                                     Console.ForegroundColor = ConsoleColor.DarkGray;
                                     Console.WriteLine($"{textContent.Text}");
                                 }

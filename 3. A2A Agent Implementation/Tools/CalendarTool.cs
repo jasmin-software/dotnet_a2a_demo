@@ -27,9 +27,9 @@ internal static class CalendarTool {
             .Select(e => $"- {e.Title}: {e.Start:yyyy-MM-dd HH:mm} to {e.End:yyyy-MM-dd HH:mm}");
         var result = string.Join(Environment.NewLine, lines);
 
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"Retrieved {events.Count} events on {parsedDate:yyyy-MM-dd}:");
-        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         foreach (var calendarEvent in events.OrderBy(e => e.Start)) {
             Console.WriteLine(@$"    {calendarEvent.Start:HH:mm} to {calendarEvent.End:HH:mm} - {calendarEvent.Title}");
         }
@@ -67,9 +67,9 @@ internal static class CalendarTool {
             Description = description
         };
 
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Created calendar event:");
-        Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine(@$"
     Event title: {calendarEvent.Title}
     Start time: {calendarEvent.Start}

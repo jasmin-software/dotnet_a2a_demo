@@ -2,7 +2,7 @@
 
 ## How do we create our own A2A agent?
 
-In this walkthrough, you will create calendar assistant agent.
+In this walkthrough, you will create your own calendar assistant agent.
 
 We would be able to ask the agent to schedule an event for us, or list our schedule of the day.
 

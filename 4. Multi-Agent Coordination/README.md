@@ -1,23 +1,21 @@
+# 4. Multi-Agent Coordination
+
+## How do we connect the agents?
+
 ![workflow](workflow.png)
 
-This walkthrough involves developing a client application that sequentially communcates with multiple agents in order to solve this challenge:
+In this walkthrough, you'll develop a client application that talks to multiple agents (i.e., weather agent, calendar agent, summary agent). 
 
-```
-I need to schedule an activity as soon as possible. The activity requires good weather.
+We would be able to ask the client to schedule an outdoor activity for us. It will:
+1. Determine a time with good weather (using the **weather agent**) 
+2. Figure out when we are free (using the **calendar agent**)
+3. Provide a description of the activity scheduled (using the **summary agent**)
 
-Schedule the activity for me after determining the most suitable time depending weather conditions.
-```
+We will be using a sequential workflow since more than one agent is involved.
 
-This means two agents will get engaged to fulfill the task:
-1. The weather agent
-2. The calendar agent
-3. The activity summary agent
+## Setup
 
-Workflow concepts are introduced in the walkthrough since more than one agent is involved in the solution. In this scenario, we will setup a sequential workflow.
-
-### Setup
-
-Create a simple .NET web application with the following terminal window commands:
+Create a .NET web application with the following terminal window commands:
 
 ``` bash
 dotnet new web -n '4. Multi-Agent Coordination'
@@ -49,12 +47,11 @@ Replace `appsettings.Development.json` with this JSON code:
 
 Edit the `.gitignore` file and add to it `appsettings.Development.json` so that your secrets do not find their way into source control by mistake.
 
-### Set up chat client configuration
+## Program.cs
 
-Delete any existing code in `Program.cs`.
+Replace `Program.cs` with the following code in sequence.
 
-Add the following code in sequence.
-
+### Read configuration settings
 ``` C#
 using System.ClientModel;
 using System.Text.Json;
@@ -75,8 +72,18 @@ string? endpoint = config["GitHub:ApiEndpoint"] ?? "https://models.github.ai/inf
 string? model = config["GitHub:Model"] ?? "openai/gpt-4o-mini";
 ```
 
-### Initialize chat client
+### Connect to the A2A agents from previous steps
+``` C#
+// Connect to the A2A weather agent
+A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://netbc-weather-agent.azurewebsites.net/"));
+AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 
+// Connect to the A2A calendar agent
+A2ACardResolver calendarAgentCardResolver = new A2ACardResolver(new Uri("http://localhost:5098/"));
+AIAgent calendarAgent = await calendarAgentCardResolver.GetAIAgentAsync();
+```
+
+### Initialize chat client and create a summary agent
 ``` C#
 // Initialize chat client
 var chatClient = new OpenAIClient(
@@ -86,31 +93,9 @@ var chatClient = new OpenAIClient(
         Endpoint = new Uri(endpoint)
     })
     .GetChatClient(model).AsIChatClient();
-```
 
-### Connect to the A2A weather agent
-
-``` C#
-// Connect to the A2A weather agent
-A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://netbc-weather-agent.azurewebsites.net/"));
-AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
-```
-
-### Connect to the A2A calendar agent
-
-We will use the calendar agent that we built in the third workshop `3. A2A Agent Implementation`. 
-
-``` C#
-// Connect to the A2A calendar agent
-A2ACardResolver calendarAgentCardResolver = new A2ACardResolver(new Uri("http://localhost:5098/"));
-AIAgent calendarAgent = await calendarAgentCardResolver.GetAIAgentAsync();
-```
-
-### Create a client agent to summarize the workflow
-
-``` C#
-// Create a client agent to summarize the event created
-var activitySummaryAgent = chatClient.AsAIAgent(
+// Create a client-side agent to summarize the event created
+var summaryAgent = chatClient.AsAIAgent(
         name: "Assistant",
         instructions: @"You are a calendar event summary assistant.
         You are the final step in a workflow. Earlier agents selected a time based on weather and created the event.
@@ -201,45 +186,76 @@ try {
 }
 ```
 
-### Run solution
+## Run app
 
-In the terminal window of the third walkthrough `3. A2A Agent Implementation`, run the following command so that the web app listens on `port 5098`:
+> [!IMPORTANT]
+> Before running this app, ensure the calendar agent in Step 3 is running on `http://localhost:5098`
+>
+> You can do it by navigating to the `3. A2A Agent Implementation` folder in terminal and run the following:
+> ```bash
+> dotnet run --urls=http://localhost:5098
+> ```
 
-```bash
-dotnet run --urls=http://localhost:5098
-```
-
-In another terminal window of the `4. Multi-Agent Coordination` folder, run the following command:
-
+In a new terminal window, navigate to the `4. Multi-Agent Coordination` folder, run the following:
 ```bash
 dotnet run
 ```
 
-You are prompted with this:
+You'd be prompted with this:
 
 ```
 Enter the outdoor activity you'd like to plan or :q to quit.
 ```
 
-I entered the following:
+Go ahead and ask the agent to schedule a run or a hike for you, e.g.,
 
 ```
-I want to hike along the Knox Mountain - Apex Trail in Kelowna, BC, Canada.
+I want to hike along the Knox Mountain - Apex Trail in Kelowna, BC, Canada tomorrow.
 ```
 
-This is the response I got from the workflow agent:
+<details>
+
+<summary>Here's an example of the output</summary>
 
 ```
 [A2A Agent: Weather Agent] 
-{"current":{"time":"2026-04-13T10:15","temperature":"11.1°C","feelsLike":"10.4°C","windSpeed":"3.2 km/h","condition":"Overcast"},"today":{"hourly":[{"time":"2026-04-13T00:00","temperature":"8.9°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T01:00","temperature":"8.7°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T02:00","temperature":"7.9°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T03:00","temperature":"8.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T04:00","temperature":"8.1°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T05:00","temperature":"8.8°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T06:00","temperature":"9°C","precipitation":"0.1 mm","condition":"Drizzle"},{"time":"2026-04-13T07:00","temperature":"8.9°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T08:00","temperature":"9.1°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T09:00","temperature":"9.7°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T10:00","temperature":"10.6°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T11:00","temperature":"12.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T12:00","temperature":"11.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T13:00","temperature":"11.2°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T14:00","temperature":"11.9°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T15:00","temperature":"13.6°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T16:00","temperature":"14.1°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T17:00","temperature":"13.8°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T18:00","temperature":"13°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T19:00","temperature":"11.3°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T20:00","temperature":"9.8°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T21:00","temperature":"9.4°C","precipitation":"0 mm","condition":"Overcast"},{"time":"2026-04-13T22:00","temperature":"8.7°C","precipitation":"0 mm","condition":"Partly cloudy"},{"time":"2026-04-13T23:00","temperature":"7.8°C","precipitation":"0 mm","condition":"Clear sky"}]}}
+{
+    "current": {
+        "time": "2026-04-22T09:00",
+        "temperature": "10.4°C",
+        "feelsLike": "9.5°C",
+        "windSpeed": "5.6 km/h",
+        "condition": "Overcast"
+    },
+    "today": {
+        "hourly": [
+            {
+                "time": "2026-04-22T00:00",
+                "temperature": "8.8°C",
+                "precipitation": "0 mm",
+                "condition": "Partly cloudy"
+            },
+            {
+                "time": "2026-04-22T01:00",
+                "temperature": "8.5°C",
+                "precipitation": "0 mm",
+                "condition": "Partly cloudy"
+            }, ...
+        ]
+    }
+}
 
 [A2A Agent: Calendar Agent] 
-It looks like you're planning a hike along the Knox Mountain - Apex Trail in Kelowna. The weather forecast for April 13 shows an overcast condition with temperatures ranging from 10.6°C at 10:00 AM increasing steadily to 14.1°C by 4:00 PM. It remains overcast most of the day with lighter conditions turning partly cloudy later in the afternoon.
+It looks like you're planning a hike along the Knox Mountain - Apex Trail in Kelowna. The weather forecast for April 22 shows an overcast condition with temperatures ranging from 10.6°C at 10:00 AM increasing steadily to 14.1°C by 4:00 PM. It remains overcast most of the day with lighter conditions turning partly cloudy later in the afternoon.
 
-[Assistant]
+[Client Agent: Summary Agent]
 Your hike along the Knox Mountain - Apex Trail is scheduled from 1:00 PM to 4:00 PM.
 
 This time was chosen for the mild temperature of around 11-14°C and the partly cloudy conditions expected by the afternoon, making it comfortable for outdoor activity.
 
 Bring layers and water, as temperatures may be cooler earlier on.
 ```
+</details>
+
+## That's all! 
+Now, you have the tools to build your own A2A agent 🙂‍

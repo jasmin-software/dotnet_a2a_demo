@@ -145,6 +145,7 @@ Add the following to get the response faster since it is streamed in real-time.
 // Send message and stream the response
 var streamingResponse = chatClient.AsAIAgent().RunStreamingAsync(message);
 Console.WriteLine("Streaming response from agent:");
+
 await foreach (var update in streamingResponse)
 {
     foreach (var content in update.Contents)

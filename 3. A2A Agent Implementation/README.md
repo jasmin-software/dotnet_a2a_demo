@@ -348,7 +348,7 @@ The Swagger interface will automatically open in your browser:
 
 ![Swagger Interface](images/swagger.png)
 
-### Test your app
+### Send message to agent
 
 Choose the GET `/v1/message:stream` endpoint. Then, click on the `Try it out` button.
 

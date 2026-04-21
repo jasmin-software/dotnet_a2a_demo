@@ -5,16 +5,14 @@ namespace A2AAgent.Tools;
 internal static class CalendarTool {
     private static ICalendarStore _calendarStore = new InMemoryCalendarStore();
 
-    public static void Initialize(ICalendarStore calendarStore)
-    {
+    public static void Initialize(ICalendarStore calendarStore) {
         _calendarStore = calendarStore;
     }
 
     [Description("Get calendar events for a given date in yyyy-MM-dd format.")]
     public static string GetEventsOnDate(
         [Description("Date in yyyy-MM-dd format")] string date) {
-        if (!DateOnly.TryParse(date, out var parsedDate))
-        {
+        if (!DateOnly.TryParse(date, out var parsedDate)) {
             return "Invalid date. Please provide the date in yyyy-MM-dd format.";
         }
 

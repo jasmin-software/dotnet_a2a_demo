@@ -185,7 +185,7 @@ You'd be prompted with this:
 Enter the outdoor activity you'd like to plan or :q to quit.
 ```
 
-Go ahead and ask the agent to schedule a run, hike, or picnic for you, e.g.,
+Go ahead and ask the agent to schedule a run, hike, or picnic, e.g.,
 
 ```
 I want to hike along the Knox Mountain - Apex Trail in Kelowna, BC, Canada tomorrow.
@@ -283,7 +283,7 @@ catch (Exception ex) {
 [A2A Agent: Weather Agent] 
 {
     "current": {
-        "time": "2026-04-22T09:00",
+        "time": "2026-04-21T09:00",
         "temperature": "10.4°C",
         "feelsLike": "9.5°C",
         "windSpeed": "5.6 km/h",

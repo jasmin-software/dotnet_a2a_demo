@@ -231,6 +231,7 @@ Bring layers and water, as temperatures may be cooler earlier on.
 
 <summary>Debug logs</summary>
 <br>
+
 You can toggle the `isDebug` flag to true to see exactly what the weather and calendar agents are returning:
 
 ``` json

@@ -55,7 +55,7 @@ app.Use(async (context, next) =>
 {
     var logger = context.RequestServices
                         .GetRequiredService<ILoggerFactory>()
-                        .CreateLogger("A2A.RequestLogger");
+                        .CreateLogger("A2A.CalendarAgent.RequestLogger");
 
     logger.LogInformation(@"    Time: {Time}
     Request Path: {Path}

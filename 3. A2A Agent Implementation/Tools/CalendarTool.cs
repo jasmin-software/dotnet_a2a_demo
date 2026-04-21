@@ -25,8 +25,17 @@ internal static class CalendarTool {
         var lines = events
             .OrderBy(e => e.Start)
             .Select(e => $"- {e.Title}: {e.Start:yyyy-MM-dd HH:mm} to {e.End:yyyy-MM-dd HH:mm}");
+        var result = string.Join(Environment.NewLine, lines);
 
-        return string.Join(Environment.NewLine, lines);
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine($"Retrieved {events.Count} events on {parsedDate:yyyy-MM-dd}:");
+        Console.ResetColor();
+        foreach (var calendarEvent in events.OrderBy(e => e.Start)) {
+            Console.WriteLine(@$"    {calendarEvent.Start:HH:mm} to {calendarEvent.End:HH:mm} - {calendarEvent.Title}");
+        }
+        Console.WriteLine("");
+        
+        return result;
     }
 
     [Description("Create a calendar event.")]
@@ -57,6 +66,15 @@ internal static class CalendarTool {
             Location = location,
             Description = description
         };
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("Created calendar event:");
+        Console.ResetColor();
+        Console.WriteLine(@$"
+    Event title: {calendarEvent.Title}
+    Start time: {calendarEvent.Start}
+    End time: {calendarEvent.End}");
+        Console.WriteLine("");
 
         _calendarStore.AddEvent(calendarEvent);
 

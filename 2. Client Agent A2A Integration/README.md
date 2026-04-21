@@ -139,10 +139,10 @@ No precipitation is expected, and the weather will gradually become sunnier and 
 <summary>Debug logs</summary>
 <br>
 
-If you'd like to see the debug logs, add these else-if block to the `update.Contents` loop:
+If you'd like to see the debug logs, you can toggle the `isDebug` flag to true and add these else-if block to the `update.Contents` loop:
 
 ``` C#
-        else if (isDebug && content is FunctionCallContent functionCallContent)
+else if (isDebug && content is FunctionCallContent functionCallContent)
         {                    
             var argsJson = JsonSerializer.Serialize(
                 functionCallContent.Arguments,

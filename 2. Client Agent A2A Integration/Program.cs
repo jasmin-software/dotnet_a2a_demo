@@ -5,7 +5,7 @@ using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI;
 
-// Set up chat client configuration
+// Read configuration settings
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
@@ -25,19 +25,20 @@ var chatClient = new OpenAIClient(
     .GetChatClient(model).AsIChatClient();
 
 // Connect to the A2A weather agent
-A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://netbc-weather-agent.azurewebsites.net/"));
+A2ACardResolver weatherAgentCardResolver = new A2ACardResolver(new Uri("https://a2a-weather.azurewebsites.net/"));
 AIAgent weatherAgent = await weatherAgentCardResolver.GetAIAgentAsync();
 
-// Create a client agent that uses the weather agent as a tool 
+// Create a client agent that uses the A2A weather agent as a tool
 var agent = chatClient.AsAIAgent(
         name: "Assistant",
-        instructions: @"You are a personal weather assistant who speaks concisely. 
-        When asked for the weather, summarize the current weather and the forecast for the next few hours.
+        instructions: @"You are a personal weather assistant. 
+        You summarize the current weather and the forecast for the next few hours.
         Highlight any significant changes in the weather.
-        When asked for the weather in the future, summarize the forecast of that day.", 
+        ", 
         tools: [weatherAgent.AsAIFunction()]);
 
-// Send message to agent
+// Send message to agent and stream response
+var isDebug = true;
 var response = agent.RunStreamingAsync("What is the weather like in Vancouver?");
 await foreach (var update in response)
 {
@@ -47,7 +48,7 @@ await foreach (var update in response)
         {
             Console.Write(textContent.Text);
         }
-        else if (content is FunctionCallContent functionCallContent)
+        else if (isDebug && content is FunctionCallContent functionCallContent)
         {                    
             var argsJson = JsonSerializer.Serialize(
                 functionCallContent.Arguments,
@@ -56,11 +57,10 @@ await foreach (var update in response)
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"\n[Function Call: {functionCallContent.Name}]\nArguments:\n{argsJson}");
         }
-        else if (content is FunctionResultContent functionResultContent)
+        else if (isDebug && content is FunctionResultContent functionResultContent)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"\n[Function Result: {functionResultContent.Result}]");
         }
-
     }
 }

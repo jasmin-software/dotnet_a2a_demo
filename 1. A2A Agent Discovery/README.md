@@ -7,7 +7,7 @@ We will create a simple application to discover the capabilities of a weather ag
 
 ## Setup
 
-Let's first create a .NET console app with the following terminal window command:
+Create a .NET console app with the following command:
 
 ``` bash
 dotnet new console -n '1. A2A Agent Discovery'
@@ -15,7 +15,9 @@ cd '1. A2A Agent Discovery'
 dotnet add package Microsoft.Agents.AI.A2A --version 1.0.0-preview.260402.1
 ```
 ## Program.cs
-Open your application in VS code. Replace the content in `Program.cs` with the following C# code in sequence:
+Open your application in VS code. 
+
+Replace the content in `Program.cs` with the following code in sequence:
 
 ### Connect to the web A2A Agent and get agent card:
 
@@ -124,9 +126,10 @@ Received complete response from agent:
 
 </details>
 
-<br />
+<details>
+<summary>Streaming option</summary>
 Optionally, you can also stream the response from the agent.  
-<br><br>
+
 Comment out this code.
 
 ```C#
@@ -152,5 +155,7 @@ await foreach (var update in streamingResponse)
     }
 }
 ```
+</details>
+
 
 ## Next: [2. Client Agent A2A Integration](https://github.com/jasmin-software/dotnet_a2a_workshop/blob/master/2.%20Client%20Agent%20A2A%20Integration/README.md)

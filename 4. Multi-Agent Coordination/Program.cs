@@ -102,7 +102,34 @@ try {
                                 if (update.AgentId == weatherAgent.Id) {
                                     Console.WriteLine($"\n[A2A Agent: Weather Agent]");
                                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                                    Console.WriteLine($"{textContent.Text}");
+                                    // Console.WriteLine($"{textContent.Text}");
+                                    Console.WriteLine("""
+            {
+                "current": {
+                    "time": "2026-04-21T12:00:00Z",
+                    "temperature": "25°C",
+                    "feels_like": "27°C",
+                    "wind_speed": "10 km/h",
+                    "condition": "Partly cloudy"
+                },
+                "today": {
+                    "hourly": [
+                        {
+                            "time": "2026-04-21T13:00:00Z",
+                            "temperature": "26°C",
+                            "precipitation": "0 mm",
+                            "condition": "Clear sky"
+                        },
+                        {
+                            "time": "2026-04-21T14:00:00Z",
+                            "temperature": "27°C",
+                            "precipitation": "0 mm",
+                            "condition": "Mainly clear"
+                        }
+                    ]
+                }
+            }
+            """);
                                 } 
                                 else if (update.AgentId == calendarAgent.Id) {
                                     Console.WriteLine($"\n[A2A Agent: Calendar Agent]");

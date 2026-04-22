@@ -5,7 +5,7 @@
 
 There's reference implementation for each steps in its respective folder. Check them out if case you get stuck!
 
-## Pre-reqs:
+### Pre-reqs:
 - VS Code with [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) extension
 - [.NET SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 

@@ -350,7 +350,7 @@ The Swagger interface will automatically open in your browser:
 
 ### Send message to agent
 
-Choose the GET `/v1/message:stream` endpoint. Then, click on the `Try it out` button.
+Choose the POST `/v1/message:stream` endpoint. Then, click on the `Try it out` button.
 
 ![Message Stream](images/message-stream.png)
 
